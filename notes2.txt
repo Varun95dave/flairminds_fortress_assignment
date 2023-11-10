@@ -1,0 +1,113 @@
+Report Date
+Law Firm Borrower
+
+Case number
+--> Project ID
+
+Client Retained Date
+--> Create Date
+
+Case Type
+--> Product Used?  [might have to use similarity rule here for mapping] <Fortress Case Type> ** certain empty cells in 01-11-2023.Truvada,Zantac 
+drop sheet2 and embolization coli
+50% accuracy achieved so far
+TVM	<3M EarPlugs>
+no desired case mapped	<Talcum Powder>
+Paragard	1
+Roundup	1
+Taxotere <Truvada>
+Avandia	
+Valsartan	1
+Zantac	1
+
+
+Settled or Not Settled?
+--> Phase will be labelled as "Settled" (Yes / No)
+
+Filed or Not Filed ?
+--> Phase will be labelled as "Litigation" (Yes / No)
+
+Medical Record Present or Not Present? **01-11-2023 and 31-10-2023 don't have "Count of Medical Records Items"
+--> Flag Yes unless the "Count of Medical Records Items" field is 0 (Yes / No)
+
+Closed or Not Closed?
+--> Phase will be labelled as "Terminated" (Yes / No)
+
+Damage/Injury 1
+Damage/Injury 2
+Damage/Injury 3
+--> Diagnosis to be mapped with Fortress Damage/Injury --> delimiter "," "and" ";" [might have to use similarity rule here for mapping] 
+**Daignosis values stored in Type of Injury in file 31-10-2023.3M  <copy pasted it from type of injury to Daignosis>
+segregate, check individual similarity scores based on lookup an	d take distinct from output and add it to 3 fields, if more than three raise a drop flag
+
+Defendant
+--> mapping Corresponding Case Type [Product Used?] with Defendant **many-to-one mapping for defendent to case type <for now picking the first ones in order>
+
+Borrower Share of Fee
+--> PW % Percentage
+**variation in data -- 47.5/37.5 <check regex to take the first split> -- No Fee Split in CFA <flagging them> -- 50% <as is> -- 100 <adding % sign>
+** N/A??
+
+Handling Law Firm
+PW & Co-Counsel
+The tape does not explicitly point out the Handling Law Firm. 
+However, the general rule goes as follows: If Column "PW % Percentage" is 100%, that means Law Firm 1 is the Handling Law Firm as they collect 100% of the contract attorney fee. 
+If Column "PW % Percentage" is greater than Column "Co-Counsel % Percentage", that means Law Firm 1 is the handling firm and vice versa
+text in K or M action?
+**HLM in case of 50/50 split
+
+If K > M L HLF or else Cocounsel 
+
+Co-Counsel 1 Name
+Co-Counsel 2 Name
+Co-Counsel 3 Name
+Co-Counsel 4 Name
+Co-Counsel 5 Name
+If you see PW & [law firm] in Column L that law firm will be the Co-Counsel. If not specify in Column L then check Column I. 
+If the Co-Counsel does not show up in the dropdown list or if you are not sure, please flag to us
+PW & Co-Counsel [column L] | Law Firm or Referral Source [column I] -- mapped with Fortress Counsel Law Firm
+** Law Firm or Referral Source not present in all files --31-10-2023,01-11-2023 <leave blank if no info for col I>
+
+Co-Counsel 1 Share of Fee
+Co-Counsel 2 Share of Fee
+Co-Counsel 3 Share of Fee
+Co-Counsel 4 Share of Fee
+Co-Counsel 5 Share of Fee
+Co-Counsel % Percentage | Referral Fee Split (if any)
+PW % Percentage + Co-Counsel % Percentage + Referral Fee Split (if any) = 100, if not raise a flag
+
+
+Processing config sheet
+
+State|Abbreviation		
+Fortress Case Type --> list
+Corresponding Case Type|Fortress Damage/Injury --> list for f d/i and kv pair		
+Corresponding Case Type|	Defendant		--> list for def and kv pair
+Fortress Counsel Law Firm --> list
+
+{'diagnosis_casetype_dict': {'3M EarPlugs': ['Hearing Loss ', 'Partial Hearing Loss', 'Tinnitus', 'Vitiligo'], 'Abilify': ['Compulsive Behavior Change', 'Obsessive Behavior Change'], 'Actos': ['Bladder Cancer', 'Heart Failure'], 'Asbestos': ['Cancer', 'Death', 'Mesothelioma'], 'Avandia': ['Congestive Heart Failure', 'Heart Attack', 'Liver Damage'], 'Bair Hugger': ['Amputation', 'Infection'], 'Benicar': ['Enteropathy', 'Intestinal Damage'], 'Depakote': ['Birth defects', 'Spina bifida'], 'Essure': ['Autoimmune disorders', 'Hysterectomy', 'Internal Bleeding'], 'Granuflo': ['Cardiac Arrest', 'Death'], 'Hernia Mesh': ['Chronic Pain / Discomfort', 'Infection', 'Internal Bleeding'], 'Hip Devices': ['Chronic Pain / Discomfort', 'Internal Bleeding', 'Metal Poisoning'], 'Invokana': ['Amputation', 'Ketoacidosis', 'Kidney Damage'], 'IVC Filters': ['Blood Clots', 'Internal Bleeding', 'Removal Issues'], 'Knee Implant': ['Chronic Pain / Discomfort', 'Infection', 'Removal Issues'], 'Levaquin': ['Aneurysm', 'Aortic Dissection', 'Peripheral Neuropathy'], 'Mirena': ['Hysterectomy', 'Internal Bleeding', 'Organ perforation'], 'Nuva Ring': ['Blood Clots', 'Cardiovascular', 'Pulmonary Embolism'], 'Paragard': ['Broken Arms upon removal', 'Internal Bleeding', 'IUD broke/fracture/embedded', 'Organ perforation', 'Pelvic pain and cramping'], 'Paxil': ['Birth defects', 'Suicide'], 'Pradaxa': ['Internal Bleeding'], 'Reglan': ['Suicide', 'Tardive Dyskinesia'], 'Risperdal': ['Gynecomastia'], 'Roundup': ['Cancer', "Non-Hodgkin's Lymphoma"], 'Talcum Powder': ['Mesothelioma', 'Ovarian Cancer'], 'Truvada': ['Bone break/fracture/density loss', 'Chronic Kidney Disease (CKD)', 'Osteoporosis', 'Renal failure/deficiency', 'Tooth loss'], 'TVM': ['Chronic Pain / Discomfort', 'Internal Bleeding', 'Removal Issues'], 'Valsartan': ['Bladder Cancer', 'Colon Cancer', 'Colorectal cancer', 'Kidney Cancer', 'Liver Cancer', 'Pancreatic Cancer', 'Prostate Cancer', 'Stomach Cancer'], 'Zantac': ['Bladder Cancer', 'Brain Cancer', 'Breast Cancer', 'Colon Cancer', 'Colorectal cancer', 'Esophageal / Throat / Nasal Cancer', 'Esophageal Cancer', 'Kidney Cancer', 'Liver Cancer', 'Lung Cancer', 'Ovarian Cancer', 'Pancreatic Cancer', 'Prostate Cancer', 'Rectal Cancer', 'Skin Cancer', 'Stomach Cancer', 'Stomach Cancer', 'Testicular Cancer', 'Thyroid Cancer', 'Uterine Cancer']}, 
+'defendent_casetype_dict': {'3M EarPlugs': ['3M'], 'Paragard': ['TEVA'], 'Roundup': ['Bayer'], 'Talcum Powder': ['J&J'], 'Truvada': ['Gilead Sciences'], 'Valsartan': ['Zhejiang Huahai Pharmaceutical Co., Ltd., ', 'Hetero Labs, Ltd. '], 'Zantac': ['Sanofi Aventis', 'Pfizer', 'GlaxoSmithKline']}}
+
+
+dropped fields 
+Client State
+Venue (If filed)
+Settled Date
+Actual Paid Date
+Projected Fee Amount (PFA)
+MDL fees assessed/assumed
+Reimbursable Case Expenses
+Borrower Projected Gross Settlement Amount
+Actual Paid Date
+Actual Gross Settlement Amount  
+Contract Attorney Fee
+
+
+** Talc in Fortress Case Type (renamed it to Talcum Powder)  but not present in Corresponding Case Type, Truvada is missing in Fortress Case Type (hence added to it)
+
+
+flagged data
+medical_record_present_or_not_present?
+passed null values
+
+need to get distinct records --- without considering filename medical_record_present_or_not_present? --taking the latest reocrd as per report date <9707014>
